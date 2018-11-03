@@ -116,7 +116,7 @@ app.post("/board", function(req,res){
         if(response!=null){
             res.json({status:false, error:{board:"duplicate board"}})
         }else{
-        boar66d = new Board({title:req.body.title})
+        board = new Board({title:req.body.title})
         board.save(function(err){
             if(err){
                 console.log("error in creating new board", err)
@@ -149,19 +149,20 @@ app.get("/board",function(req,res){
         res.json({status:false, message:"You are not logged in. To get a list of boards you are subscribed to, Please log in."})
     }
 })
-// app.get("/board/:id",function(req,res){
-//     console.log("/board/id route activated")
-//     Board.findById(req.params.id, function(err,response){
-//         if(err){
-//             console.log("error finding board by id------", err)
-//             res.json({status:false, error:err})
-//         }
-//         else{
-//             console.log("found board by id", response)
-//             res.json({status:true, board:response})
-//         }
-//     }
-// })
+app.get("/board/:title",function(req,res){
+    console.log("/board/title route activated")
+    Board.findOne({title:req.params.title}, function(err,response){
+        if(err){
+            console.log("error finding board by Title------", err)
+            res.json({status:false, error:err})
+        }
+        else{
+            console.log("found board by title", response)
+            res.json({status:true, board:response})
+        }
+    }
+)
+})
 app.get("/boards", function(req,res){
     console.log("/boards get route activated")
     Board.find({}, function(err,boards){
