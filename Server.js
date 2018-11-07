@@ -14,7 +14,7 @@ app.use(session({
     secret: 'keyboardkitteh',
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 60000 }
+    cookie: { maxAge: 600000 }
   }))
 mongoose.Promise = global.Promise;
 var UsersSchema = new mongoose.Schema({
@@ -76,16 +76,39 @@ app.post("/user",function(req,res){
                                     req.session.userId = user.id;
                                     console.log("succesfully created a new user")
                                     res.json({status:true})
-                                })
-                                
-                            }
-        
-            })}
-        })
-        }  
+                                })    
+                            }})}})}}})})
+app.get("/user", function(req,res){
+    if(req.session.userId!=undefined){
+        console.log("found user,",req.session.userId)
+        res.json({status:true, userId : req.session.userId})
+    }else{
+        console.log("didnt find user,",req.session.userId)
+        res.json({status:false})
+    }
+})
+app.post("/post", function(req,res){
+    console.log("Making new post")
+    
+    post = new Post({title:req.body.title, content:req.body.content,userId:req.body.userId, board:req.body.title, time:Date() })
+    post.save(function(err){
+        if(err){
+            console.log("problem creating post",err)
+            res.json({status:false})
+        }else{
+            Board.findOneAndUpdate({title:req.body.board},{$push:{posts:post}}, function(err,boardres){
+                console.log(boardres)
+                if(err){
+                    res.json({status:false})
+                }else{
+                    console.log("made post")
+                    res.json({status:true}) 
+                }
+                
+            })
+            
         }
     })
-
 })
 app.post("/login", function(req,res){
     console.log("login route is activated")
